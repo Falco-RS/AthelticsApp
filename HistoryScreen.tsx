@@ -1,18 +1,54 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
+interface Carreras{
+  race: string,
+  time: string,
+  date: string
+}
+
 const HistoryScreen = () => {
-  const historyData = [
-    { race: 'Carrera 1', time: '12:34', date: '2024-10-10' },
-    { race: 'Carrera 2', time: '11:56', date: '2024-10-15' },
-    { race: 'Carrera 3', time: '13:10', date: '2024-10-20' },
-  ];
+  const [myTimes, setMyTimes] = useState<Carreras[]>([]);
+
+  const fetchTimes = async () => {
+    try {
+      const response = await fetch('http://192.168.11.150:5000/get_times', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          host: 'localhost',
+          dbname: 'db_carreras',
+          user: 'postgres',
+          password: 'marr5604',
+          port: 8002,
+          cedula: '123',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+      const json = await response.json();
+      setMyTimes(json.data);
+      console.log(myTimes);
+    } catch (error) {
+      console.error('Error al obtener los tiempos:', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchTimes();
+  }, []);
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Historial de Tiempos</Text>
       <ScrollView style={styles.historyContainer}>
-        {historyData.map((item, index) => (
+        {myTimes.map((item, index) => (
           <View key={index} style={styles.historyItem}>
             <Text style={styles.historyText}>Carrera: {item.race}</Text>
             <Text style={styles.historyText}>Tiempo: {item.time}</Text>

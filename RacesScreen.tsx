@@ -1,18 +1,50 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-
+interface Races{
+  raceName: string,
+  date: string,
+  participants: string[]
+}
 const RacesScreen = () => {
-  const racesData = [
-    { raceName: 'Maratón de la Ciudad', date: '2024-11-15', participants: ['Carlos Gómez', 'Laura Méndez', 'Juan Pérez'] },
-    { raceName: 'Carrera 5K Playa', date: '2024-12-01', participants: ['Ana López', 'Felipe Díaz', 'Marta Sánchez'] },
-    { raceName: 'Ultra Trail Montaña', date: '2025-01-10', participants: ['Sofía Torres', 'Pedro Fernández', 'Luis Rodríguez'] },
-  ];
+  const [myRaces, setMyRaces] = useState<Races[]>([]);
+  const fetchTimes = async () => {
+    try {
+      const response = await fetch('http://192.168.11.150:5000/get_carreras', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          host: 'localhost',
+          dbname: 'db_carreras',
+          user: 'postgres',
+          password: 'marr5604',
+          port: 8000,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+      const json = await response.json();
+      setMyRaces(json.data);
+      console.log(myRaces);
+    } catch (error) {
+      console.error('Error al obtener los tiempos:', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchTimes();
+  }, []);
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Carreras Futuras</Text>
       <ScrollView style={styles.racesContainer}>
-        {racesData.map((race, index) => (
+        {myRaces.map((race, index) => (
           <View key={index} style={styles.raceItem}>
             <Text style={styles.raceName}>{race.raceName}</Text>
             <Text style={styles.raceDate}>Fecha: {race.date}</Text>

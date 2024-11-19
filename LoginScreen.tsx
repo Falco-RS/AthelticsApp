@@ -1,14 +1,47 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import {useUserStore} from "./store";
 
 const LoginScreen = ({ navigation }: any) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const {setUser} = useUserStore();
 
-  const handleLogin = () => {
-    console.log('Username:', username);
-    console.log('Password:', password);
-    navigation.navigate('Menu', { username });
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('http://192.168.11.150:5000/sign_in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          host: 'localhost',
+          dbname: 'db_carreras',
+          user: 'postgres',
+          password: 'marr5604',
+          port: 8002,
+          email: email,
+          passwordUser: password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+      const json = await response.json();
+      setUser(json.data);
+      console.log(json);
+      return true;
+    } catch (error) {
+      console.error('Error al obtener los tiempos:', error);
+      return false;
+    }
+  };
+
+  const handleLogin = async () => {
+    if (await fetchUser()) {
+      navigation.navigate('Menu');
+    }
   };
 
   return (
@@ -17,9 +50,9 @@ const LoginScreen = ({ navigation }: any) => {
 
       <TextInput
         style={styles.input}
-        placeholder="Nombre de usuario"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Correo"
+        value={email}
+        onChangeText={setEmail}
       />
 
       <TextInput

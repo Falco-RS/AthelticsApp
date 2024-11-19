@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {useUserStore} from "./store";
 
-const MenuScreen = ({ route, navigation }: any) => {
-  const { username } = route.params;  
+const MenuScreen = ({ navigation }: any) => {
+
+
+  const {name} = useUserStore();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bienvenido, {username}!</Text>
+      <Text style={styles.welcomeText}>Bienvenido, {name}!</Text>
 
       <TouchableOpacity
         style={styles.button}

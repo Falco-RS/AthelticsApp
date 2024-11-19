@@ -1,35 +1,93 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import {Message, UserChat} from "./types";
+import {useUserStore} from "./store";
 
 const ChatScreen = () => {
-  const [selectedContact, setSelectedContact] = useState<string | null>(null);
-  const [message, setMessage] = useState('');
+  const [selectedContact, setSelectedContact] = useState<UserChat | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newmessage, setNewMessage] = useState<string>('');
+  const {id} = useUserStore();
 
-  const contacts = [
-    'Carlos Gómez',
-    'Laura Méndez',
-    'Juan Pérez',
-    'Ana López',
-    'Felipe Díaz',
-  ];
+  const [contacts, setContacts] = useState<UserChat[]>([]);
 
-  const handleSelectContact = (contact: string) => {
-    setSelectedContact(contact);  
-    setMessage('');  
+  const handleSelectContact = (contact: UserChat) => {
+    setSelectedContact(contact);
+
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch('http://192.168.11.150:5000/get_mensajes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          host: 'localhost',
+          dbname: 'db_carreras',
+          user: 'postgres',
+          password: 'marr5604',
+          port: 8000,
+          cedula_remi:id,
+          cedula_dest:selectedContact?.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+      const json = await response.json();
+      setMessages(json.data);
+      console.log(json);
+    } catch (error) {
+      console.error('Error al obtener los tiempos:', error);
+    }
+  };
+
+  const fetchParticipantes = async () => {
+    try {
+      const response = await fetch('http://192.168.11.150:5000/get_participantes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          host: 'localhost',
+          dbname: 'db_carreras',
+          user: 'postgres',
+          password: 'marr5604',
+          port: 8002,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+      const json = await response.json();
+      setContacts(json.data);
+      console.log(json);
+    } catch (error) {
+      console.error('Error al obtener los tiempos:', error);
+    }
   };
 
   const handleSendMessage = () => {
-    console.log(`Mensaje a ${selectedContact}: ${message}`);
-    setMessage(''); 
+    console.log(`Mensaje a ${selectedContact}: ${messages}`);
+    setNewMessage('');
   };
+
+  useEffect(() => {
+    fetchParticipantes();
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.chatContainer}>
         <ScrollView style={styles.contactList}>
-          {contacts.map((contact, index) => (
-            <TouchableOpacity key={index} style={styles.contactItem} onPress={() => handleSelectContact(contact)}>
-              <Text style={styles.contactText}>{contact}</Text>
+          {contacts.map((contact) => (
+            <TouchableOpacity style={styles.contactItem} onPress={() => handleSelectContact(contact)}>
+              <Text style={styles.contactText}>{contact.name}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -37,15 +95,21 @@ const ChatScreen = () => {
         <View style={styles.chatBox}>
           {selectedContact ? (
             <View>
-              <Text style={styles.chatTitle}>Chat con {selectedContact}</Text>
+              <Text style={styles.chatTitle}>Chat con {selectedContact.name}</Text>
+              <Text style={styles.chatTitle}>ID: {selectedContact.id}</Text>
               <ScrollView style={styles.messageContainer}>
-                {/* Aquí aparecerían los mensajes */}
+                {messages.map((message) => (
+                    <View>
+                      <Text style={styles.chatTitle}>ID: {message.id}</Text>
+                      <Text style={styles.chatTitle}>{message.content}</Text>
+                    </View>
+                ))}
               </ScrollView>
               <TextInput
                 style={styles.input}
                 placeholder="Escribe tu mensaje"
-                value={message}
-                onChangeText={setMessage}
+                value={newmessage}
+                onChangeText={setNewMessage}
               />
               <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
                 <Text style={styles.buttonText}>Enviar</Text>

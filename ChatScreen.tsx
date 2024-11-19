@@ -13,7 +13,7 @@ const ChatScreen = () => {
 
   const handleSelectContact = (contact: UserChat) => {
     setSelectedContact(contact);
-
+    fetchMessages();
   };
 
   const fetchMessages = async () => {

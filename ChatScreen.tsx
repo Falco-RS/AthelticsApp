@@ -3,6 +3,15 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import {Message, UserChat} from "./types";
 import {useUserStore} from "./store";
 
+/**
+ * Componente `ChatScreen`.
+ * 
+ * Esta pantalla permite al usuario seleccionar un contacto de la lista y comenzar una conversación de chat.
+ * Se carga la lista de contactos desde la API, y al seleccionar un contacto, se recuperan y muestran los mensajes
+ * de la conversación. El usuario puede escribir y enviar mensajes a ese contacto.
+ * 
+ * @returns {JSX.Element} - Retorna la vista del componente que muestra la lista de contactos y el chat con el contacto seleccionado.
+ */
 const ChatScreen = () => {
   const [selectedContact, setSelectedContact] = useState<UserChat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -11,14 +20,29 @@ const ChatScreen = () => {
 
   const [contacts, setContacts] = useState<UserChat[]>([]);
 
+
+  /**
+   * Función que maneja la selección de un contacto para iniciar un chat.
+   * 
+   * Cuando el usuario selecciona un contacto, esta función establece el contacto seleccionado
+   * y llama a la función `fetchMessages` para cargar los mensajes de ese chat.
+   * 
+   * @param {UserChat} contact - El contacto seleccionado para el chat.
+   */
   const handleSelectContact = (contact: UserChat) => {
     setSelectedContact(contact);
     fetchMessages();
   };
 
+  /**
+   * Función que obtiene los mensajes entre el usuario y el contacto seleccionado.
+   * 
+   * Realiza una solicitud POST a la API para obtener los mensajes del chat entre el usuario y el contacto
+   * seleccionado. Los mensajes se almacenan en el estado `messages`.
+   */
   const fetchMessages = async () => {
     try {
-      const response = await fetch('http://192.168.11.150:5000/get_mensajes', {
+      const response = await fetch('http://192.168.0.16:5000/get_mensajes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +51,7 @@ const ChatScreen = () => {
           host: 'localhost',
           dbname: 'db_carreras',
           user: 'postgres',
-          password: 'marr5604',
+          password: 'Jojadaya',
           port: 8000,
           cedula_remi:id,
           cedula_dest:selectedContact?.id,
@@ -45,9 +69,15 @@ const ChatScreen = () => {
     }
   };
 
+  /**
+   * Función que obtiene la lista de participantes (contactos) desde la API.
+   * 
+   * Realiza una solicitud POST a la API para obtener la lista de contactos disponibles.
+   * Los contactos se almacenan en el estado `contacts`.
+   */
   const fetchParticipantes = async () => {
     try {
-      const response = await fetch('http://192.168.11.150:5000/get_participantes', {
+      const response = await fetch('http://192.168.0.16:5000/get_participantes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,22 +86,30 @@ const ChatScreen = () => {
           host: 'localhost',
           dbname: 'db_carreras',
           user: 'postgres',
-          password: 'marr5604',
+          password: 'Jojadaya',
           port: 8002,
         }),
       });
 
+      console.log(response);
       if (!response.ok) {
         throw new Error(`Error en la solicitud: ${response.status}`);
       }
       const json = await response.json();
-      setContacts(json.data);
       console.log(json);
+      setContacts(json.data);
+      
     } catch (error) {
       console.error('Error al obtener los tiempos:', error);
     }
   };
 
+  /**
+   * Función que maneja el envío de un nuevo mensaje.
+   * 
+   * Envía el nuevo mensaje al contacto seleccionado. Actualmente, solo borra el campo de entrada después
+   * de presionar el botón "Enviar" (la funcionalidad de enviar el mensaje a la API debe ser implementada).
+   */
   const handleSendMessage = () => {
     console.log(`Mensaje a ${selectedContact}: ${messages}`);
     setNewMessage('');

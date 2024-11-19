@@ -1,18 +1,35 @@
 import React, {useEffect, useState} from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
+
+/**
+ * Interface para describir la estructura de los datos de una carrera.
+ *
+ * Esta interfaz define los campos necesarios para representar los tiempos de un participante en una carrera.
+ */
 interface Carreras{
   race: string,
   time: string,
   date: string
 }
 
+/**
+ * Componente HistoryScreen.
+ *
+ * Esta pantalla muestra el historial de tiempos de un participante. Realiza una solicitud 
+ * a la API para obtener los tiempos de las carreras y los muestra en una lista.
+ */
 const HistoryScreen = () => {
   const [myTimes, setMyTimes] = useState<Carreras[]>([]);
 
+  /**
+   * Función para obtener los tiempos de las carreras del servidor.
+   * Realiza una solicitud POST a la API para obtener los tiempos del participante.
+   * Actualiza el estado `myTimes` con los datos obtenidos.
+   */
   const fetchTimes = async () => {
     try {
-      const response = await fetch('http://192.168.11.150:5000/get_times', {
+      const response = await fetch('http://192.168.0.16:5000/get_times', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,7 +38,7 @@ const HistoryScreen = () => {
           host: 'localhost',
           dbname: 'db_carreras',
           user: 'postgres',
-          password: 'marr5604',
+          password: 'Jojadaya',
           port: 8002,
           cedula: '123',
         }),

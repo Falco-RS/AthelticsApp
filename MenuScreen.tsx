@@ -2,9 +2,18 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import {useUserStore} from "./store";
 
+/**
+ * Componente `MenuScreen`.
+ * 
+ * Pantalla de menú principal de la aplicación donde el usuario puede navegar a diferentes secciones
+ * de la aplicación como el historial de tiempos, las carreras futuras y el chat.
+ * Muestra un mensaje de bienvenida al usuario con su nombre.
+ * 
+ * @param {Object} navigation - Propiedades de navegación proporcionadas por React Navigation.
+ * @returns {JSX.Element} - La vista principal del menú con opciones de navegación.
+ */
+
 const MenuScreen = ({ navigation }: any) => {
-
-
   const {name} = useUserStore();
 
   return (

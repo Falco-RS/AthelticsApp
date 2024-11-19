@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
+/**
+ * Componente `RegisterScreen`.
+ * 
+ * Pantalla de registro de usuario donde el usuario puede ingresar su nombre de usuario, correo y contraseña.
+ * En este momento, la lógica de registro está simulada, y al presionar "Registrarse", se navega de vuelta 
+ * a la pantalla principal de la aplicación.
+ * 
+ * @param {Object} navigation - Propiedades de navegación proporcionadas por React Navigation.
+ * @returns {JSX.Element} - La vista del formulario de registro.
+ */
 const RegisterScreen = ({ navigation }: any) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  /**
+   * Función que maneja la lógica de registro.
+   * Actualmente, solo navega a la pantalla de inicio al hacer clic en "Registrarse".
+   */
   const handleRegister = () => {
-    // Aquí iría la lógica de registro (por ejemplo, validación o API)
-    // Por ahora solo navegamos de vuelta a la pantalla de inicio
     navigation.navigate('Home');
   };
 

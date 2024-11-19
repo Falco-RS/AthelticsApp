@@ -1,15 +1,40 @@
 import React, {useEffect, useState} from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+
+/**
+ * Interfaz `Races`.
+ * 
+ * Define la estructura de un objeto de carrera, que incluye:
+ * - `raceName`: Nombre de la carrera.
+ * - `date`: Fecha en que se llevará a cabo la carrera.
+ * - `participants`: Lista de participantes en la carrera.
+ */
 interface Races{
   raceName: string,
   date: string,
   participants: string[]
 }
+
+/**
+ * Componente `RacesScreen`.
+ * 
+ * Este componente muestra una lista de carreras futuras, obtenida desde una API.
+ * Para cada carrera, se muestra su nombre, fecha y la lista de participantes.
+ * 
+ * @returns {JSX.Element} - La vista del componente que muestra las carreras futuras.
+ */
 const RacesScreen = () => {
   const [myRaces, setMyRaces] = useState<Races[]>([]);
+
+  /**
+   * Función que obtiene la lista de carreras desde la API.
+   * 
+   * Realiza una solicitud POST a la API para obtener las carreras futuras y sus participantes.
+   * Luego, actualiza el estado `myRaces` con los datos obtenidos.
+   */
   const fetchTimes = async () => {
     try {
-      const response = await fetch('http://192.168.11.150:5000/get_carreras', {
+      const response = await fetch('http://192.168.0.16:5000/get_carreras', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -18,7 +43,7 @@ const RacesScreen = () => {
           host: 'localhost',
           dbname: 'db_carreras',
           user: 'postgres',
-          password: 'marr5604',
+          password: 'Jojadaya',
           port: 8000,
         }),
       });

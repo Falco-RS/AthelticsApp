@@ -2,6 +2,16 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import {useUserStore} from "./store";
 
+/**
+ * Componente `HomeScreen`.
+ * 
+ * Pantalla principal de la aplicación, que permite al usuario navegar a la pantalla de registro
+ * o iniciar sesión. Se presenta un título de la aplicación y dos botones para realizar las acciones
+ * de registro o inicio de sesión.
+ * 
+ * @param {Object} navigation - Propiedades de navegación proporcionadas por React Navigation.
+ * @returns {JSX.Element} - La vista principal de la pantalla de inicio con los botones de navegación.
+ */
 const HomeScreen = ({ navigation }: any) => {
 
   return (

@@ -2,14 +2,32 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import {useUserStore} from "./store";
 
+/**
+ * Componente `LoginScreen`.
+ * 
+ * Esta pantalla permite al usuario iniciar sesión en la aplicación. El usuario ingresa su correo y contraseña,
+ * y el componente se encarga de enviar los datos a la API para verificar la autenticidad de las credenciales.
+ * Si la autenticación es exitosa, el usuario será redirigido al menú principal.
+ * 
+ * @param {any} navigation - Propiedad que permite la navegación a otras pantallas de la aplicación.
+ * @returns {JSX.Element} - Retorna la vista del componente con los campos de correo, contraseña y el botón de inicio de sesión.
+ */
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {setUser} = useUserStore();
 
+  /**
+   * Función para realizar la solicitud de autenticación al servidor.
+   * 
+   * Esta función envía una solicitud POST a la API para verificar las credenciales del usuario (correo y contraseña).
+   * Si la autenticación es exitosa, los datos del usuario se almacenan en el estado global (store).
+   * 
+   * @returns {boolean} - Retorna `true` si la autenticación fue exitosa, `false` si ocurrió un error.
+   */
   const fetchUser = async () => {
     try {
-      const response = await fetch('http://192.168.11.150:5000/sign_in', {
+      const response = await fetch('http://192.168.0.16:5000/sign_in', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -18,7 +36,7 @@ const LoginScreen = ({ navigation }: any) => {
           host: 'localhost',
           dbname: 'db_carreras',
           user: 'postgres',
-          password: 'marr5604',
+          password: 'Jojadaya',
           port: 8002,
           email: email,
           passwordUser: password,
@@ -38,6 +56,12 @@ const LoginScreen = ({ navigation }: any) => {
     }
   };
 
+  /**
+   * Función que maneja el proceso de inicio de sesión.
+   * 
+   * Llama a la función `fetchUser` para realizar la autenticación. Si la autenticación es exitosa,
+   * navega a la pantalla de "Menu".
+   */
   const handleLogin = async () => {
     if (await fetchUser()) {
       navigation.navigate('Menu');
